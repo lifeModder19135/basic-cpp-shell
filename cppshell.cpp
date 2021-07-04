@@ -47,3 +47,23 @@ void printdir()
     printf("\n Dir: %s", cwd);
 }    
 
+//Executes system commands, supplied as args, in a child process
+void execArgs(char** parsed)
+{
+    pid_t pid = fork();
+    if (pid == -1){
+        printf("\nFailed forking child process.");
+        return;
+    } else if (pid == 0) {
+        if (execvp(parsed[0], parsed) < 0) {
+            printf("Error: Could not execute.")
+        }
+        exit(0);
+    } else {
+        //Wait for child to terminate
+        wait(NULL);
+        return;
+    }
+}
+
+
