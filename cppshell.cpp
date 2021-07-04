@@ -56,7 +56,7 @@ void execArgs(char** parsed)
         return;
     } else if (pid == 0) {
         if (execvp(parsed[0], parsed) < 0) {
-            printf("Error: Could not execute.")
+            printf("\nERROR: Could not execute.")
         }
         exit(0);
     } else {
@@ -67,3 +67,46 @@ void execArgs(char** parsed)
 }
 
 
+void execArgsPiped(char** parsed, char** parsedPipe)
+{
+    int pipeEnds[2];
+    pid_t p1, p2;
+    if (p1 < 0) {
+        printf("\nERROR: Could not create pipe. Values passed may be insufficient.");
+        return;
+    }
+    p1 = fork();
+    if (p1 < 0){        
+        printf("\nERROR: Could not execute forking. Values passed may be insufficient.");
+        return;
+    } else if(p1 == 0) {
+        close(pipeEnds[0]);
+        dup2(pipeEnds[1], STDOUT_FILENO); 
+        close(pipeEnds[1]);
+
+        if (execvp(parsed[0], parsed) < 0) {  
+            printf("\nERROR: Could not execute first command. Values passed may be insufficient.");
+            exit(0);
+        }
+    } else {
+        p2 = fork();
+        
+        if (p2 < 0) { 
+            printf("\nERROR: Could not execute forking. Values passed may be insufficient.");
+            return;
+        }
+
+        if (p2 == 0) { 
+            close(pipeEnds[1]);
+            dup2(pipeEnds[0], STDIN_FILENO); 
+            close(pipeEnds[0]);
+            if (execvp(parsedpipe[0], parsedpipe) < 0) {
+                printf("\nERROR: Could not execute second command. Values passed may be insufficient.");
+                exit(0);
+            }
+        } else {
+            wait(NULL);
+            wait(NULL);
+        } 
+    }         
+}
