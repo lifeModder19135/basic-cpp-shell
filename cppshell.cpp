@@ -39,4 +39,11 @@ int takeInput(char* str)
     }
 }
 
+//Prints the current working directory
+void printdir()
+{
+    char cwd[1024];
+    getcwd(cwd, sizeof(cwd));
+    printf("\n Dir: %s", cwd);
+}    
 
