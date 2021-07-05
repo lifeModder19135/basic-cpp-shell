@@ -10,9 +10,24 @@
 
 #define MAXCOM 1000 // max number of letters to be supported
 #define MAXLIST 100 // max number of commands to be supported
-#define clear printf("\033[H\033[J") 
+#define clear() printf("\033[H\033[J") 
+
+/*
+ *To Do:
+ * - fix pipe handling
+ * - incorporate codemode command
+ * - incorporate cmset command
+ * - incorporate buildconf command
+ * - incorporate topkg command
+ * - more testing
+ *
+ *
+ *
+ * */
+
 void initShell()
 {
+    clear();
     printf("\n\n\n\n**************************************");
     printf("\n\n\n\n**************************************");
     printf("\n\n\n\n**********  HELLO WOOORLD!  **********");
@@ -56,7 +71,7 @@ void execArgs(char** parsed)
         return;
     } else if (pid == 0) {
         if (execvp(parsed[0], parsed) < 0) {
-            printf("\nERROR: Could not execute.")
+            printf("\nERROR: Could not execute.");
         }
         exit(0);
     } else {
@@ -71,7 +86,7 @@ void execArgsPiped(char** parsed, char** parsedPipe)
 {
     int pipeEnds[2];
     pid_t p1, p2;
-    if (p1 < 0) {
+    if (pipe(pipeEnds) < 0) {
         printf("\nERROR: Could not create pipe. Values passed may be insufficient.");
         return;
     }
@@ -100,7 +115,7 @@ void execArgsPiped(char** parsed, char** parsedPipe)
             close(pipeEnds[1]);
             dup2(pipeEnds[0], STDIN_FILENO); 
             close(pipeEnds[0]);
-            if (execvp(parsedpipe[0], parsedpipe) < 0) {
+            if (execvp(parsedPipe[0], parsedPipe) < 0) {
                 printf("\nERROR: Could not execute second command. Values passed may be insufficient.");
                 exit(0);
             }
@@ -123,7 +138,7 @@ void displayHelpMenu() {
 }
 
 int customCommandHandler(char** parsed) {
-    numberOfCustCmds = 4, i, switchArg = 0;
+    int numberOfCustCmds = 4, i, switchArg = 0;
     char* listOfCustomCommands[numberOfCustCmds];
     char* username;
 
@@ -131,8 +146,16 @@ int customCommandHandler(char** parsed) {
     listOfCustomCommands[1] = "cd";  
     listOfCustomCommands[2] = "help";
     listOfCustomCommands[3] = "hello";
+    // listOfCustomCommands[4] = "codemode";   
+    // listOfCustomCommands[5] = "cmset";  
+    // listOfCustomCommands[6] = "buildconf";
+    // listOfCustomCommands[7] = "topkg";
+    // listOfCustomCommands[8] = "";   
+    // listOfCustomCommands[9] = "";  
+    // listOfCustomCommands[10] = "";
+    // listOfCustomCommands[11] = "";
     
-    for (i = 0, i < numberOfCustCmds, i++) {
+    for (i = 0; i < numberOfCustCmds; i++) {
         if (strcmp(parsed[0], listOfCustomCommands[i]) == 0) {
             switchArg = i+1;
             break;
@@ -141,30 +164,30 @@ int customCommandHandler(char** parsed) {
 
     switch (switchArg) {
         case 1:        
-           printf("\nGoodbye\n") 
+           printf("\nGoodbye\n"); 
            exit(0);            
         case 2:
-            chdir(parsed[1])
+            chdir(parsed[1]);
             return 1;
         case 3:
-            openHelp();
+            displayHelpMenu();
             return 1;
         case 4:
             username = getenv("USER");
             printf("\nHello, %s. \nThis is no place to fool around!", username);
             return 1;
        //  case 5:
-        default;
+        default:
             break;
     }
     return 0;
 }
 
-parsePipe(char* str, char** strpiped) 
+int parsePipe(char* str, char** strpiped) 
 {
     int i; 
        
-    for (i = 0, i < 2, i++) {
+    for (i = 0; i < 2; i++) {
         strpiped[i] = strsep(&str, "|");         
         if (strpiped[i] == NULL) {
             break;
@@ -181,7 +204,7 @@ void parseSpace(char* str, char** parsed)
 {
     int i; 
         
-    for (i = 0, i < MAXLIST, i++) {
+    for (i = 0; i < MAXLIST; i++) {
         parsed[i] = strsep(&str, " ");         
         if (parsed[i] == NULL)
             break;
@@ -219,7 +242,7 @@ int main()
     initShell();
 
     while (1) {
-        printDir();
+        printdir();
         if (takeInput(inputString))
             continue;
         execFlag = processInputString(inputString, parsedArgs, parsedArgsPiped);
