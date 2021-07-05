@@ -160,7 +160,7 @@ int customCommandHandler(char** parsed) {
     return 0;
 }
 
-parsePipe(char* str, char** ) 
+parsePipe(char* str, char** strpiped) 
 {
     int i; 
        
@@ -180,7 +180,7 @@ parsePipe(char* str, char** )
 void parseSpace(char* str, char** parsed) 
 {
     int i; 
-       
+        
     for (i = 0, i < MAXLIST, i++) {
         parsed[i] = strsep(&str, " ");         
         if (parsed[i] == NULL)
@@ -216,9 +216,9 @@ int main()
     char* parsedArgsPiped[MAXLIST];
     int execFlag = 0;
 
-    init_shell;
+    initShell();
 
-    while true {
+    while (1) {
         printDir();
         if (takeInput(inputString))
             continue;
