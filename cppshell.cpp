@@ -110,3 +110,74 @@ void execArgsPiped(char** parsed, char** parsedPipe)
         } 
     }         
 }
+
+void displayHelpMenu() {
+    puts("\n--------HELP--------"
+         "\n\n\n EXPIRIMENTAL!!!!!"  
+         "\nAll UNIX shell commands should work."
+         "\nThis shell also currently supports pipes"  
+         "\nand whitespace fixes"
+         "\n");
+
+        return;
+}
+
+int customCommandHandler(char** parsed) {
+    numberOfCustCmds = 4, i, switchArg = 0;
+    char* listOfCustomCommands[numberOfCustCmds];
+    char* username;
+
+    listOfCustomCommands[0] = "exit";   
+    listOfCustomCommands[1] = "cd";  
+    listOfCustomCommands[2] = "help";
+    listOfCustomCommands[3] = "hello";
+    
+    for (i = 0, i < numberOfCustCmds, i++) {
+        if (strcmp(parsed[0], listOfCustomCommands[i]) == 0) {
+            switchArg = i+1;
+            break;
+        } 
+    }
+
+    switch (switchArg) {
+        case 1:        
+           printf("\nGoodbye\n") 
+           exit(0);            
+        case 2:
+            chdir(parsed[1])
+            return 1;
+        case 3:
+            openHelp();
+            return 1;
+        case 4:
+            username = getenv("USER");
+            printf("\nHello, %s. \nThis is no place to fool around!", username);
+            return 1;
+       //  case 5:
+        default;
+            break;
+    }
+    return 0;
+}
+
+parsePipe(char* str, char** ) 
+{
+    int i; 
+       
+    for (i = 0, i < 2, i++) {
+        strpiped[i] = strsep(&str, "|");         
+        if (strpiped[i] == NULL) {
+            break;
+        }
+    }    
+    if (strpiped[1] == NULL) {
+       return 0;
+    } else {
+        return 1;
+    }
+}
+
+void parseSpace(char* str, char** parsed) 
+{
+    
+}
