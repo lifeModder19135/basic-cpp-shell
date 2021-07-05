@@ -189,3 +189,23 @@ void parseSpace(char* str, char** parsed)
             i--;
     }
 }
+
+int processInputString(char* input, char** parsed, char** parsedpipe)
+{
+    char* inputpiped[2];
+    int piped = 0;
+
+    piped = parsePipe(input, inputpiped);
+
+    if (piped) {
+        parseSpace(inputpiped[0], parsed); 
+        parseSpace(inputpiped[1], parsedpipe); 
+    } else {
+        parseSpace(input, parsed);
+    }
+
+    if (customCommandHandler(parsed))
+        return 0;
+    else
+        return 1 + piped;
+}
